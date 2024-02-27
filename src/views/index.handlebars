@@ -1,0 +1,35 @@
+<h1>Chat en tiempo real</h1>
+
+<div id="login">
+
+        <input type="text" id="user" placeholder="usuario">
+        <input type="password" id="password" placeholder="contraseña">
+
+
+        <button id="loginButton" class="button">Iniciar sesion</button>
+        <button id="signupButton" class="button">Registrarse</button>
+
+</div>
+<div id="roomSelector">
+    <h2>Elegir sala</h2>
+    <select id="rooms">
+  <option value="chat">chat global</option>
+</select>
+    <input type="password" id="roomPassword" placeholder="contraseña">
+    <br>
+    <button id="joinRoom">Unirse</button>
+</div>
+<div id="roomCreate">
+    <h2>Crear sala</h2>
+    <input type="text" id="roomName" placeholder="nombre de la sala">
+    <input type="password" id="addRoomPassword" placeholder="contraseña">
+    <button id="addRoom">Crear</button>
+</div>
+<div id="chat">
+    <input type="text" id="chatBox" placeholder="mensaje">
+    <button id="send" class="button">Enviar</button>
+    <p id="log"></p>
+</div>
+
+<script src="https://cdn.socket.io/4.7.3/socket.io.min.js"></script>
+<script src="js/main.js"></script>
