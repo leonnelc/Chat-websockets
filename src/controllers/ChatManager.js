@@ -21,7 +21,7 @@ class ChatManager{
         if (roomName.length < 4){
             return {success:false, errmsg:"El nombre de la sala debe tener almenos 4 caracteres"};
         }
-        if (this.#rooms.hasOwnProperty(roomName)){
+        if (this.#rooms.hasOwnProperty(roomName) || roomName == "lobby"){
             return {success:false, errmsg:"La sala ya existe"};
         }
         this.#rooms[roomName] = {hash: this.#hash(password), description:"", log:[]};

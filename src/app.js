@@ -28,6 +28,9 @@ const httpServer = app.listen(PORT, () => {
     console.log(`Listening at: 192.168.0.58:${PORT}`);
 })
 const io = socket(httpServer);
+
+cm.addRoom("chat", "");
+
 io.on("connection" , (socket) => {
     console.log(`Cliente conectado: ${socket.handshake.address}`);
     let loggedIn = false;
@@ -77,6 +80,7 @@ io.on("connection" , (socket) => {
             socket.emit("login");
             socket.emit("message", `<span style="color: #b8bb26">Iniciaste sesion</span>`);
             socket.emit("availableRooms", cm.getRooms());
+            socket.join("lobby"); // TODO: evitar que se cree una sala llamada lobby
         } else{
             socket.emit("message", `${login.errmsg}`);
         }
@@ -138,6 +142,7 @@ io.on("connection" , (socket) => {
             return;
         }
         socket.emit("message", `${data.room} creado con exito`);
+        io.to("lobby").emit("availableRooms", [data.room]);
     })
 
     socket.on("kick", (data) => {

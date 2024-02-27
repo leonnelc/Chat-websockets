@@ -15,11 +15,12 @@ const joinRoom = document.getElementById("joinRoom");
 const selectedRoom = document.getElementById("rooms");
 const roomSelector = document.getElementById("roomSelector");
 const roomCreate = document.getElementById("roomCreate");
-let log = document.getElementById("log");
-let user = userBox.value.trim();
+const log = document.getElementById("log");
+const rooms = document.getElementById("rooms");
+const availableRooms = new Set();
 
 function sendMessage(){
-    user = userBox.value.trim()
+    let user = userBox.value.trim()
     if(chatBox.value.trim().length > 0 && user.length > 0){
         socket.emit("message", {user:user, message: chatBox.value});
         chatBox.value = "";
@@ -58,20 +59,19 @@ sendButton.addEventListener("click", () => {
     chatBox.focus();
 })
 loginButton.addEventListener("click", () => {
-    user = userBox.value.trim();
+    let user = userBox.value.trim();
     let password = passwordBox.value;
     console.log(`Intentando iniciar sesion. user:${user}, password:${password}`);
     socket.emit("login", {user:user, password:password});
 })
 signupButton.addEventListener("click", () => {
-    user = userBox.value.trim();
+    let user = userBox.value.trim();
     let password = passwordBox.value;
     console.log(`Intentando registrarse. user:${user}, password:${password}`)
     socket.emit("register", {user:user, password:password});
 })
 
 socket.on("sendLog", (data) => {
-    log = document.getElementById("log");
     console.log(data);
     let msgs = log.innerHTML;
     for (let message of data){
@@ -81,7 +81,6 @@ socket.on("sendLog", (data) => {
 })
 socket.on("message", (message) => {
     console.log(message);
-    log = document.getElementById("log");
     log.innerHTML += `${message} <br>`;
 })
 socket.on("login", () => {
@@ -96,4 +95,17 @@ socket.on("join", () => {
     roomSelector.remove();
     roomCreate.remove();
     document.getElementById("chat").style.visibility = "visible";
+})
+socket.on("availableRooms", (data) => {
+    for (let room of data){
+        if (availableRooms.has(room)){
+            continue;
+        }
+        availableRooms.add(room);
+        if (room == "chat"){
+            rooms.add(new Option("Chat global", room));
+            continue;
+        }
+        rooms.add(new Option(room, room));
+    }
 })
