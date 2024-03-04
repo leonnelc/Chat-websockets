@@ -241,3 +241,15 @@ select {
 #roomCreate {
   visibility: hidden;
 }
+img {
+  display: block;
+  max-width: 20%;
+  height: auto;
+  width: auto;
+}
+.username {
+  color: var(--orange);
+}
+.message {
+  color: var(--fg);
+}

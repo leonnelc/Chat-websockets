@@ -1,12 +1,42 @@
 const fs = require("fs");
 const crypto = require("crypto");
+const sanitizeHtml = require("sanitize-html");
 
 class ChatManager{
     #filepath
     #rooms
+    #whitelist
+    #maxMsgSize
     constructor(filepath){
         this.#filepath = filepath;
         this.#rooms = {};
+        this.#initialize;
+        this.#maxMsgSize = 256;
+    }
+    sanitize(data){
+        let message = data.message;
+        let username = data.user;
+        message = message.slice(0, this.#maxMsgSize);
+        message = sanitizeHtml(message, {
+            allowedTags: ['b', 'i', 'img', 'span'],
+            allowedAttributes: {
+              img: ['src'],
+              span: ['color']
+            }
+          });
+        message = `<span class="username">${username}</span>: <span class="message">${message}</span>`;
+        return message;
+    }
+    #saveData(){
+
+    }
+    #initialize(){
+        if (!fs.existsSync(this.#filepath)){
+            console.log(`${this.#filepath} doesn't exist, creating it...`);
+            fs.writeFileSync(this.#filepath, JSON.stringify(this.#rooms));
+            return;
+        }
+        
     }
     #hash(password){
         const hash = crypto.createHash('sha256').update(password).digest('hex');

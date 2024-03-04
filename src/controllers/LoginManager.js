@@ -8,6 +8,10 @@ class LoginManager{
         this.#hashes = {test:{hash:"",level:"admin"}};
         this.#initialize();
     }
+    #hasBlacklistedChars(username){
+        const blacklisted = ['<','\\'];
+        return blacklisted.some(char => username.includes(char));
+    }
     login(username, password){
         if (!this.#hashes.hasOwnProperty(username)){
             console.log(`Username ${username} not found`);
@@ -26,6 +30,9 @@ class LoginManager{
         }
         if (username.length < 4){
             return {success:false, errmsg:"El nombre de usuario es muy corto"};
+        }
+        if (this.#hasBlacklistedChars(username)){
+            return {success:false, errmsg:"El nombre de usuario contiene caracteres no permitidos"};
         }
         this.#hashes[username] = {hash:this.#hash(password), level:privilege}
         this.#writeFile();

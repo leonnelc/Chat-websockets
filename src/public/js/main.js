@@ -1,6 +1,5 @@
 const socket = io();
 
-document.title = "Chat";
 const chatBox = document.getElementById("chatBox"); 
 const userBox = document.getElementById("user");
 const passwordBox = document.getElementById("password");
@@ -11,13 +10,14 @@ const joinPassword = document.getElementById("roomPassword");
 const addPassword = document.getElementById("addRoomPassword");
 const addRoom = document.getElementById("addRoom");
 const roomName = document.getElementById("roomName");
-const joinRoom = document.getElementById("joinRoom");
+const joinButton = document.getElementById("joinButton");
 const selectedRoom = document.getElementById("rooms");
 const roomSelector = document.getElementById("roomSelector");
 const roomCreate = document.getElementById("roomCreate");
 const log = document.getElementById("log");
 const rooms = document.getElementById("rooms");
 const availableRooms = new Set();
+const loginDiv = document.getElementById("login");
 
 function sendMessage(){
     let user = userBox.value.trim()
@@ -25,6 +25,18 @@ function sendMessage(){
         socket.emit("message", {user:user, message: chatBox.value});
         chatBox.value = "";
     }
+}
+function login(){
+    let user = userBox.value.trim();
+    let password = passwordBox.value;
+    console.log(`Intentando iniciar sesion. user:${user}, password:${password}`);
+    socket.emit("login", {user:user, password:password});
+}
+function register(){
+    let user = userBox.value.trim();
+    let password = passwordBox.value;
+    console.log(`Intentando registrarse. user:${user}, password:${password}`)
+    socket.emit("register", {user:user, password:password});
 }
 function blinkTitle(){
     let oldTitle = document.title;
@@ -43,10 +55,21 @@ function blinkTitle(){
     }
 
 };
+loginDiv.addEventListener("keyup", (event) => {
+    if (event.key == "Enter"){
+        loginButton.click();
+    }
+})
+roomSelector.addEventListener("keyup", (event) => {
+    if (event.key == "Enter"){
+        joinButton.click();
+    }
+})
+
 addRoom.addEventListener("click", () => {
     socket.emit("create", {room:roomName.value, password:addPassword.value})
 })
-joinRoom.addEventListener("click", () => {
+joinButton.addEventListener("click", () => {
     socket.emit("join", {room:selectedRoom.value, password:joinPassword.value});
 })
 chatBox.addEventListener("keyup", (event) => {
@@ -58,18 +81,8 @@ sendButton.addEventListener("click", () => {
     sendMessage();
     chatBox.focus();
 })
-loginButton.addEventListener("click", () => {
-    let user = userBox.value.trim();
-    let password = passwordBox.value;
-    console.log(`Intentando iniciar sesion. user:${user}, password:${password}`);
-    socket.emit("login", {user:user, password:password});
-})
-signupButton.addEventListener("click", () => {
-    let user = userBox.value.trim();
-    let password = passwordBox.value;
-    console.log(`Intentando registrarse. user:${user}, password:${password}`)
-    socket.emit("register", {user:user, password:password});
-})
+loginButton.addEventListener("click", login);
+signupButton.addEventListener("click", register);
 
 socket.on("sendLog", (data) => {
     console.log(data);
