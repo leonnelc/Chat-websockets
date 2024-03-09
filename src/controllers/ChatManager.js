@@ -5,13 +5,17 @@ const sanitizeHtml = require("sanitize-html");
 class ChatManager{
     #filepath
     #rooms
-    #whitelist
     #maxMsgSize
+    #regex
     constructor(filepath){
         this.#filepath = filepath;
         this.#rooms = {};
         this.#initialize;
         this.#maxMsgSize = 256;
+	this.#regex = RegExp("(c *u+ *l+ *o)|(v *e+ *r+ *g+ *a)|(c *o+ *n+ *c+ *h+ *a?)|(t *e+ *t+ *a)|(c *a+ *n+ *c+ *e* *r)|(p ?u+ ?t+ ?o)|(p *i+ *t+ *o)|(p *i+ *j+ *(i*e*) *a)|(p *o+ *r+ *o+ *n+ *g+ *a)","gi");
+    }
+    #filter(message){
+	return message.replaceAll(this.#regex, "buba"); 
     }
     sanitize(data){
         let message = data.message;
@@ -24,6 +28,7 @@ class ChatManager{
               span: ['color']
             }
           });
+	message = this.#filter(message);
         message = `<span class="username">${username}</span>: <span class="message">${message}</span>`;
         return message;
     }
